@@ -34,7 +34,7 @@ class Automatyczne_generowanie_kartotek extends pl.com.stream.verto.adm.asen.too
                 }
 
         enum AttributesPartNotUseGood{
-                    WYMIAR(100504L), SZTUKI(100505L), PRZELICZNIK(100506L),  ATEST(100508L), TYPATEST(100509L), WYTOP(100600)
+                    WYMIAR(100306L), SZTUKI(100505L), PRZELICZNIK(100506L),  ATEST(100508L), TYPATEST(100509L), WYTOP(100600)
 
                     private Long idAttribute;
 
@@ -65,36 +65,34 @@ class Automatyczne_generowanie_kartotek extends pl.com.stream.verto.adm.asen.too
         window.addField("species","Gatunek",FieldType.String).setState(State.Editable);
         window.addField("unitCode", "Jednostka mairy", FieldType.Dictionary).setDictionary('idUnit').setValue(100000L);
         window.addField("trash","Po cięciu",FieldType.Boolean).setValue(false);
-
+        window.addField("isPurchaseReverseCharge","Odwrotne obciążenie",FieldType.Boolean).setValue(false);
 
         String basicDataPanelLayout = """
             
             <Row>
-                <Component id="idBusinessDictionaryItemTree" class="label" align="left"   expand="30"/>
-                <Spring occupyx="6"/>
-                <Component id="unitCode" class="label" align="right" fill="none"  expand="0"/>
-            </Row>
-            <Row>
-                <Component id="idBusinessDictionaryItemTree" class="field" >
+                <Component id="idBusinessDictionaryItemTree"  >
                    <Property name="idBusinessDictionaryList" binding="field.main.attSubjectDef" /> 
-                </Component>
-                <Component id="unitCode" class="field" align="right" fill="none" />
+                </Component>               
             </Row>
             <Row>
-                <Component id="dimension" class="label" align="left"  expand="30"/>
-                <Spring occupyx="6"/>
-                <Component id="species" class="label" align="left"/>
+                <Component id="dimension" />
             </Row>
             <Row>
-                <Component id="dimension" class="field" />
-                <Component id="species" class="field" fill="none"/>
+                <Component id="species" />
+            </Row>
+            <Row>
+                <Component id="unitCode" />
+            </Row>
+            <Row>
+                <Component id="trash"  />                 
             </Row> 
             <Row>           
-                <Component id="trash" align="left" />                
+                <Component id="isPurchaseReverseCharge"  />                
             </Row>
+           
           """
 
-        // window.addPanel("Dane podstawowe", basicDataPanelLayout);
+        window.addPanel("Dane podstawowe", basicDataPanelLayout);
 
         window.setShowQuestionBeforeEscapeWhenDataWasModified(false);
 
@@ -103,7 +101,7 @@ class Automatyczne_generowanie_kartotek extends pl.com.stream.verto.adm.asen.too
         List listGroupNames;
         Long idBusinessDictionaryItemTree;
         String dimension;
-        String species
+        String species;
 
         GoodService goodService = context.getService(GoodService.class);
 
@@ -179,7 +177,8 @@ class Automatyczne_generowanie_kartotek extends pl.com.stream.verto.adm.asen.too
             goodDto.idWarehouse = 100000L //Magazyn materiałów
             goodDto.goodIsUsedInWarehouse = true;
             goodDto.goodIsUsedInSupply = true;
-
+            goodDto.isPurchaseReverseCharge = window.getFieldsValue().isPurchaseReverseCharge;
+            goodDto.isSaleReverseCharge = window.getFieldsValue().isPurchaseReverseCharge;
 
             goodDto = goodService.init(goodDto);
             goodDto.idUnit = window.getFieldsValue().unitCode;
@@ -216,8 +215,8 @@ class Automatyczne_generowanie_kartotek extends pl.com.stream.verto.adm.asen.too
             AttributeValueService attributeValueService = context.getService(AttributeValueService.class);
             Long idAttrGoodSubject = goodDto.idAttributeSubject;
             Long idAttrGoodGroupValue = 100005L; //Grupa materiałowa
-            Long idAttrGoodDimensionValue = 101201L //Grupa materiałowa
-            Long idAttrGoodSpeciesValue = 101200L //Grupa materiałowa
+            Long idAttrGoodDimensionValue = 100306L //Wymiar
+            Long idAttrGoodSpeciesValue = 100300L //Gatunek
 
             attributeValueService.insertAttributeValueBySubjectAndDef(idAttrGoodSubject, idAttrGoodGroupValue, idBusinessDictionaryItemTree,
                     WhatUseForEditIdBusinessDictionaryItem.USE_NOT_NATIVE_DICTIONARY);
